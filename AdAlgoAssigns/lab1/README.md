@@ -1,9 +1,8 @@
 # Lab1：分治算法
 
-包含如下文件。
+包含如下文件。PDF 由 VSCode 拓展 Markdown-All-in-One 导出。
 
 ```
-基于 VSCode 拓展 Markdown-All-in-One 编写，PDF 由插件导出。
 .
 ├── dc_convexhull.py           # 分治算法实现
 ├── enum_convexhull.py         # 枚举算法实现
@@ -74,31 +73,56 @@ for vec in vec_lst:
 
 ```python
 python main.py --size 1000 --algo graham_scan_convexhull
---size 指定点集合大小
---algo 指定算法实现
---perf 是否进行性能比较
 ```
+
+- `--size` 指定点集合大小
+- `--algo` 指定算法实现
+- `--perf` 是否进行性能比较
 
 ### 执行结果
 
 分别以三种算法计算凸包，结果如下。
 
-![1683304958315](imgpasted/1683304958315.png)
-
+<!-- ![1683304958315](imgpasted/1683304958315.png)
 ![1683305052680](imgpasted/1683305052680.png)
+![1683305150204](imgpasted/1683305150204.png) -->
 
-![1683305150204](imgpasted/1683305150204.png)
+<div align="center">
+  <img src="imgpasted/1683304958315.png" width="400" height="400" />
+</div>
+
+<div align="center">
+  <img src="imgpasted/1683305052680.png" width="400" height="400" />
+</div>
+
+<div align="center">
+  <img src="imgpasted/1683305150204.png" width="400" height="400" />
+</div>
 
 ### 性能测试
 
 比较三种算法在不同数据量下的执行效率，结果如下。
 
-![1683306032411](imgpasted/1683306032411.png)
-
+<!-- ![1683306032411](imgpasted/1683306032411.png)
 ![1683306048706](imgpasted/1683306048706.png)
+![1683306064763](imgpasted/1683306064763.png) -->
 
-![1683306064763](imgpasted/1683306064763.png)
+<div align="center">
+  <img src="imgpasted/1683306032411.png" width="400" height="400" />
+</div>
+
+<div align="center">
+  <img src="imgpasted/1683306048706.png" width="400" height="400" />
+</div>
+
+<div align="center">
+  <img src="imgpasted/1683306064763.png" width="400" height="400" />
+</div>
 
 ### 时间复杂度分析
 
-基于枚举的时间复杂度为 O(n^4)，这是由于遍历所有点，故效率较低，适用于小数据量。基于 Graham-Scan 的凸包求解算法首先根据极角进行排序，然后遍历，时间复杂度为 O(nlogn)。基于分治思想的凸包求解算法时间复杂度也为 O(nlogn)。
+基于枚举的时间复杂度为 O(n^4)，这是由于遍历所有点，故效率较低，适用于小数据量。
+
+基于 Graham-Scan 的凸包求解算法首先根据极角进行排序，然后遍历，时间复杂度为 O(nlogn)。
+
+基于分治思想的凸包求解算法时间复杂度也为 O(nlogn)。
