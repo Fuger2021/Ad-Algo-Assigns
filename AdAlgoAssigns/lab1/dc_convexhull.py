@@ -12,46 +12,37 @@ def test_execute(points):
 
 def execute(points):
     start = time.time()
-
-    def ccw(p1, p2, p3):
-        return (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])
-
-    # 找到最左边和最右边的点
-    leftmost_idx = 0
-    rightmost_idx = 0
-    for i in range(len(points)):
-        if points[i][0] < points[leftmost_idx][0]:
-            leftmost_idx = i
-        if points[i][0] > points[rightmost_idx][0]:
-            rightmost_idx = i
-
-    # 递归结束条件：只有两个或更少的点
     if len(points) <= 2:
         return points
-
-    # 分别对左半部分和右半部分进行递归处理
-    left_points = []
-    right_points = []
+    def inner_prod(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+    left_max = right_max = 0
+    left_points, right_points = [], []
     for i in range(len(points)):
-        if ccw(points[leftmost_idx], points[rightmost_idx], points[i]) > 0:
+        if points[i][0] < points[left_max][0]:
+            left_max = i
+    for i in range(len(points)):
+        if points[i][0] > points[right_max][0]:
+            right_max = i
+    for i in range(len(points)):
+        temp_inner = inner_prod(points[left_max], points[right_max], points[i])
+        if inner > 0:
             left_points.append(points[i])
-        elif ccw(points[leftmost_idx], points[rightmost_idx], points[i]) < 0:
+        elif inner < 0:
             right_points.append(points[i])
-
-    left_hull = execute(left_points)
-    right_hull = execute(right_points)
-
-    # 合并左半部分和右半部分的凸包
-    hull = left_hull + right_hull
-
-    anchor = points[leftmost_idx]
-    sorted_hull = sorted(hull, key=lambda p: np.arctan2(p[1] - anchor[1], p[0] - anchor[0]))
-
-    merged_hull = [sorted_hull[0], sorted_hull[1]]
-    for i in range(2, len(sorted_hull)):
-        while len(merged_hull) >= 2 and ccw(merged_hull[-2], merged_hull[-1], sorted_hull[i]) <= 0:
-            merged_hull.pop()
-        merged_hull.append(sorted_hull[i])
+    l_convexhull = execute(left_points)
+    r_convexhull = execute(right_points)
+    s_convexhull = sorted(l_convexhull + r_convexhull, key=lambda p: np.arctan2(p[1] - points[left_max][1], p[0] - points[left_max][0]))
+    m_convexhull = [s_convexhull[0], s_convexhull[1]]
+    for i in range(len(s_convexhull)):
+        if i < 2:
+            continue
+        while len(m_convexhull) >= 2
+            if inner_prod(m_convexhull[-2], m_convexhull[-1], s_convexhull[i]) <= 0:
+                m_convexhull.pop()
+            else:
+                break
+        m_convexhull.append(s_convexhull[i])
 
     end = time.time()
-    return end - start, merged_hull
+    return end - start, m_convexhull

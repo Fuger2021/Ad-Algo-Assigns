@@ -4,33 +4,32 @@ import numpy as np
 
 def test_execute(points):
     start = time.time()
-    sorted_points = sorted(points, key=lambda p: p[0])
+    s_points = sorted(points, key=lambda p: p[0])
     end = time.time()
-    return end - start, sorted_points[:5]
+    return end - start, s_points[:5]
 
 
 def execute(points):
-    # 找到最下面的点并将其与points[0]交换
     start = time.time()
-    min_idx = 0
+    def inner_prod(p, q, r):
+        return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+
+    left_max = 0
     for i in range(len(points)):
-        if points[i][1] < points[min_idx][1]:
-            min_idx = i
-    points[0], points[min_idx] = points[min_idx], points[0]
+        if points[i][1] < points[left_max][1]:
+            left_max = i
 
-    def ccw(p1, p2, p3):
-        return (p2[0] - p1[0]) * (p3[1] - p1[1]) - (p2[1] - p1[1]) * (p3[0] - p1[0])
-
-    # 根据极角排序points[1:]
-    anchor = points[0]
-    sorted_points = sorted(points[1:], key=lambda p: np.arctan2(p[1] - anchor[1], p[0] - anchor[0]))
-
-    # 执行Graham Scan
-    hull = [points[0], sorted_points[0]]
-    for s in sorted_points[1:]:
-        while len(hull) >= 2 and ccw(hull[-2], hull[-1], s) <= 0:
-            hull.pop()
-        hull.append(s)
+    s_points = sorted(points, key=lambda p: np.arctan2(p[1] - points[left_max][1], p[0] - points[left_max][0]))
+    convexhull = [points[0], s_points[0]]
+    for i, s in enumerate(s_points):
+        if i < 1:
+            continue
+        while True:
+            if inner_prod(convexhull[-2], convexhull[-1], s) <= 0:
+                convexhull.pop()
+            if len(convexhull) >= 2:
+                break
+        convexhull.append(s)
 
     end = time.time()
-    return end - start, hull
+    return end - start, convexhull

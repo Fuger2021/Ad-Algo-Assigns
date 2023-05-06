@@ -1,55 +1,46 @@
 import numpy as np
 import heapq
-
-
-def heuristic(a, b):
-    return np.sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
+import math
 
 
 def execute(map, start, end):
-    neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
-    close_set = set()
-    came_from = {}
     gscore = {start: 0}
-    fscore = {start: heuristic(start, end)}
-    oheap = []
+    fscore = {start: cost(start, end)}
+    pathheap = []
 
-    heapq.heappush(oheap, (fscore[start], start))
+    def cost(a, b):
+        return math.sqrt(math.pow((b[0] - a[0]), 2) + math.pow((b[1] - a[1]), 2))
 
-    while oheap:
+    visited = set()
+    v_path = {}
 
-        current = heapq.heappop(oheap)[1]
+    heapq.heappush(pathheap, (fscore[start], start))
+    while pathheap:
+        node = heapq.heappop(pathheap)[1]
+        visited.add(node)
+        vision_matrix = [(0, 1), (0, -1), (1, 0),
+                         (-1, 0), (1, 1), (1, -1),
+                         (-1, 1), (-1, -1)]
 
-        if current == end:
-            data = []
-            while current in came_from:
-                data.append(current)
-                current = came_from[current]
-            data.append(start)
-            return [tuple(reversed(x)) for x in data[::-1]]
+        for v in vision_matrix:
+            visionable = node[0] + v[0], node[1] + v[1]
+            t_g_score = gscore[node] + cost(v[0], v[1])
 
-        close_set.add(current)
-
-        for i, j in neighbors:
-            neighbor = current[0] + i, current[1] + j
-            tentative_g_score = gscore[current] + np.sqrt(i ** 2 + j ** 2)
-
-            if 0 <= neighbor[0] < map.shape[0]:
-                if 0 <= neighbor[1] < map.shape[1]:
-                    if map[neighbor[0]][neighbor[1]] == 1:
-                        continue
-                else:
+            if visionable in visited:
+                if t_g_score >= gscore.get(visionable, 0):
                     continue
-            else:
-                continue
-
-            if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
-                continue
-
-            if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
-                came_from[neighbor] = current
-                gscore[neighbor] = tentative_g_score
-                fscore[neighbor] = tentative_g_score + heuristic(neighbor, end)
-                heapq.heappush(oheap, (fscore[neighbor], neighbor))
+            v_y = [i[1] for i in pathheap]
+            if t_g_score >= gscore.get(visionable, 0):
+                if visionable in v_y:
+                    continue
+                v_path[visionable] = node
+                gscore[visionable] = t_g_score
+                fscore[visionable] = t_g_score + cost(visionable, end)
+                heapq.heappush(pathheap, (fscore[visionable], visionable))
+        if node == end:
+            path = [node for node in v_path]
+            path.append(start)
+            ret_path = [reversed(x) for x in path]
+            return ret_path.reverse()
 
     return None
